@@ -1,5 +1,5 @@
-use std::fmt::{self, Display, Debug};
-use std::os::raw::{c_uint, c_int};
+use core::fmt::{self, Display, Debug};
+use core::ffi::{c_uint, c_int};
 
 use fdk_aac_sys as sys;
 

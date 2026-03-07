@@ -10,3 +10,8 @@ repository = "https://github.com/haileys/fdk-aac-rs"
 
 [dependencies]
 fdk-aac-sys = { version = "0.5", path = "fdk-aac-sys" }
+
+[features]
+decoder = []
+encoder = []
+

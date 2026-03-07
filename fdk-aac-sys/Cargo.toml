@@ -7,8 +7,18 @@ license = "MIT"
 description = "FFI bindings for libfdk-aac"
 homepage = "https://github.com/haileys/fdk-aac-rs"
 repository = "https://github.com/haileys/fdk-aac-rs"
+include = [
+    "src/**/*.rs",
+    "aac/**/*.cpp",
+    "aac/**/*.h",
+    "aac/**/*.hpp",
+    "wrapper.h",
+    "Cargo.toml",
+    "build.rs"
+]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [build-dependencies]
-cc = { version = "1.0", features = ["parallel"] }
+cc = { version = "1.2", features = ["parallel"] }
+bindgen = "0.72.1"

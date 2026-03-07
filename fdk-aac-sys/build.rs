@@ -1,4 +1,7 @@
-static SOURCES: &'static [&'static str] = &[
+use std::env;
+use std::path::PathBuf;
+
+static SOURCES: &[&str] = &[
     "aac/libAACdec/src/aac_ram.cpp",
     "aac/libAACdec/src/aac_rom.cpp",
     "aac/libAACdec/src/aacdec_drc.cpp",
@@ -172,7 +175,7 @@ static SOURCES: &'static [&'static str] = &[
     "aac/libSYS/src/syslib_channelMapDescr.cpp",
 ];
 
-static INCLUDE_DIRS: &'static [&'static str] = &[
+static INCLUDE_DIRS: &[&str] = &[
     "aac/libAACdec/include",
     "aac/libAACenc/include",
     "aac/libPCMutils/include",
@@ -189,13 +192,32 @@ static INCLUDE_DIRS: &'static [&'static str] = &[
 ];
 
 fn main() {
-    for src in SOURCES {
-        // Tell cargo to invalidate the built crate whenever the wrapper changes
-        println!("cargo:rerun-if-changed={}", src);
+    let target = env::var("TARGET").unwrap();
+    let out_dir = PathBuf::from(env::var("OUT_DIR").unwrap());
+
+    // --- Bindgen Generation ---
+    let mut builder = bindgen::Builder::default()
+        .header("wrapper.h")
+        .use_core()
+        .clang_arg(format!("--target={}", target));
+
+    for include in INCLUDE_DIRS {
+        builder = builder.clang_arg(format!("-I{}", include));
     }
 
-    let mut cc = cc::Build::new();
+    builder
+        .generate()
+        .expect("Unable to generate bindings")
+        .write_to_file(out_dir.join("bindings.rs"))
+        .expect("Couldn't write bindings!");
 
+    // --- CC Compilation ---
+    for src in SOURCES {
+        println!("cargo:rerun-if-changed={}", src);
+    }
+    println!("cargo:rerun-if-changed=wrapper.h");
+
+    let mut cc = cc::Build::new();
     cc.warnings(false);
     cc.files(SOURCES);
     cc.define("FDK_FALLTHROUGH", "");
@@ -206,12 +228,10 @@ fn main() {
 
     cc.compile("libfdk-aac.a");
 
-    println!("cargo:rustc-link-lib=fdk-aac");
-
+    // Linker flags (only for hosted targets)
     if cfg!(target_os = "linux") {
         println!("cargo:rustc-link-lib=stdc++");
     }
-
     if cfg!(target_os = "macos") {
         println!("cargo:rustc-link-lib=c++");
     }

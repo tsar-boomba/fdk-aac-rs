@@ -1,8 +1,8 @@
-use std::cmp;
-use std::fmt::{self, Display, Debug};
-use std::mem::{self, MaybeUninit};
-use std::os::raw::{c_void, c_uint, c_int};
-use std::ptr;
+use core::cmp;
+use core::fmt::{self, Display, Debug};
+use core::mem::{self, MaybeUninit};
+use core::ffi::{c_void, c_uint, c_int};
+use core::ptr;
 
 use fdk_aac_sys as sys;
 

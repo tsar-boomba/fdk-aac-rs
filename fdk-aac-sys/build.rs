@@ -228,11 +228,12 @@ fn main() {
 
     cc.compile("libfdk-aac.a");
 
+    let target_os = std::env::var("CARGO_CFG_TARGET_OS").unwrap();
     // Linker flags (only for hosted targets)
-    if cfg!(target_os = "linux") {
+    if target_os == "linux" {
         println!("cargo:rustc-link-lib=stdc++");
     }
-    if cfg!(target_os = "macos") {
+    if target_os == "macos" {
         println!("cargo:rustc-link-lib=c++");
     }
 }

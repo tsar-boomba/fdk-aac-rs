@@ -155,7 +155,7 @@ impl Decoder {
     pub fn disable_limiter(&mut self) -> Result<(), DecoderError> {
         unsafe {
             check(sys::aacDecoder_SetParam(self.handle,
-                sys::AACDEC_PARAM_AAC_LIMITER_ENABLE,
+                sys::AACDEC_PARAM_AAC_PCM_LIMITER_ENABLE,
                 0))
         }
     }

@@ -152,6 +152,14 @@ impl Decoder {
         }
     }
 
+    pub fn disable_limiter(&mut self) -> Result<(), DecoderError> {
+        unsafe {
+            check(sys::aacDecoder_SetParam(self.handle,
+                sys::AACDEC_PARAM_AAC_LIMITER_ENABLE,
+                0))
+        }
+    }
+
     pub fn fill(&mut self, data: &[u8]) -> Result<usize, DecoderError> {
         unsafe {
             let mut data_ptr = data.as_ptr() as *const u8 as *mut u8;
